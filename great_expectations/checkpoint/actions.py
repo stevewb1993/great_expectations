@@ -496,6 +496,7 @@ class OpsgenieAlertAction(ValidationAction):
         region=None,
         priority="P3",
         notify_on="failure",
+        tags: Optional[list] = None,
     ) -> None:
         """Construct a OpsgenieAlertAction
 
@@ -505,6 +506,7 @@ class OpsgenieAlertAction(ValidationAction):
             region: specifies the Opsgenie region. Populate 'EU' for Europe otherwise do not set
             priority: specify the priority of the alert (P1 - P5) defaults to P3
             notify_on: "all", "failure", "success" - specifies validation status that will trigger notification
+            tags: tags to include in the notification to OpsGenie. e.g.: ["Prod", "OverwriteQuietHours","Critical"]
         """
         super().__init__(data_context)
         self.renderer = instantiate_class_from_config(
@@ -525,6 +527,7 @@ class OpsgenieAlertAction(ValidationAction):
         self.region = region
         self.priority = priority
         self.notify_on = notify_on
+        self.tags = tags
 
     def _run(
         self,
@@ -571,6 +574,7 @@ class OpsgenieAlertAction(ValidationAction):
                 "api_key": self.api_key,
                 "region": self.region,
                 "priority": self.priority,
+                "tags": self.tags
             }
 
             description = self.renderer.render(validation_result_suite, None, None)
